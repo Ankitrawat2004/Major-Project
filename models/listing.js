@@ -9,29 +9,45 @@ const listingSchema = new Schema({
   },
   description: String,
   image: {
-   url:String,
-   filename: String,
-   
+    url: String,
+    filename: String,
   },
   price: Number,
   location: String,
   country: String,
-  reviews : [
+
+  reviews: [
     {
       type: Schema.Types.ObjectId,
-      ref : "Review",
+      ref: "Review",
     }
   ],
-  owner:{
-    type:Schema .Types.ObjectId,
-    ref:"User",
+
+  owner: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
   },
+
+  geometry: {
+    type: {
+      type: String,
+      enum: ['Point'],
+      required: true,
+    },
+    coordinates: {
+      type: [Number],
+      required: true,
+    }
+  }
 });
 
-listingSchema.post("findOneAndDelete",async(listing)=>{
-  if(listing){
-     await Review.deleteMany({_id : {$in :listing.reviews}});
-     //When you want to find documents where a field’s value matches any value in a given array.
+// Geospatial index (VERY IMPORTANT)
+listingSchema.index({ geometry: "2dsphere" });
+
+// Cascade delete reviews
+listingSchema.post("findOneAndDelete", async (listing) => {
+  if (listing) {
+    await Review.deleteMany({ _id: { $in: listing.reviews } });
   }
 });
 
