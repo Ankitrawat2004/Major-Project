@@ -1,107 +1,90 @@
-<style>
-  .btn-search {
-    background-color: #fe424d;
-    color: #fff;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-  }
-  
-  .btn-search:hover {
-    background-color: #d63840;
-    color: #fff;
-  }
-  
-  .btn-search i {
-    margin: 0;
-    
-  }
-  
-  .navbar-collapse {
-    display: flex;
-    align-items: center;
-  }
-  
-  .search-container {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .search-container form {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  
-  .search-container input {
-    min-width: 300px;
-  }
-  
-  @media (max-width: 991px) {
-    .search-container {
-      margin-top: 1rem;
-      width: 100%;
-    }
-     
-    .search-container input {
-      min-width: 200px;
-    }
-  }
-</style>
+<% if (typeof isHome !== "undefined" && isHome) { %>
+  <header class="home-header">
+    <div class="header-top">
+      <a class="airbnb-logo" href="/listings" aria-label="Wanderlust home">
+        <i class="fa-brands fa-airbnb"></i>
+        <span>airbnb</span>
+      </a>
 
-<nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
-  <div class="container-fluid">
+      <nav class="experience-nav" aria-label="Explore stays and experiences">
+        <a href="/listings" class="experience-item active">
+          <span class="nav-emoji" aria-hidden="true">🌎</span>
+          <span>All</span>
+        </a>
+        <a href="/listings" class="experience-item">
+          <span class="nav-emoji" aria-hidden="true">🏡</span>
+          <span>Homes</span>
+        </a>
+        <a href="/listings" class="experience-item">
+          <span class="nav-emoji" aria-hidden="true">🎈</span>
+          <span>Experiences</span>
+        </a>
+        <a href="/listings" class="experience-item">
+          <span class="nav-emoji" aria-hidden="true">🛎️</span>
+          <span>Services</span>
+        </a>
+      </nav>
 
-    <a class="navbar-brand" href="/listings">
-      <i class="fa-regular fa-compass"></i>
-    </a>
-
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <!-- COLLAPSE AREA (everything must stay inside this) -->
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-
-      <!-- Left side links -->
-      <div class="navbar-nav">
-        <a class="nav-link" href="/listings">Explore</a>
-      </div>
-      
-      <!-- Search Container (Centered) -->
-      <div class="search-container">
-        <form class="d-flex" role="search">
-          <input 
-            class="form-control" 
-            type="search" 
-            placeholder="Search destinations..." 
-            aria-label="Search"
-          />
-          <button class="btn btn-search" type="submit">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <span>Search</span>
+      <div class="header-actions">
+        <a class="host-link" href="/listings/new">Become a host</a>
+        <button class="round-action" type="button" aria-label="Choose language">
+          <i class="fa-solid fa-globe"></i>
+        </button>
+        <div class="account-menu">
+          <button class="round-action" type="button" aria-label="Open account menu" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fa-solid fa-bars"></i>
           </button>
-        </form>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <% if (!currUser) { %>
+              <li><a class="dropdown-item fw-semibold" href="/signup">Sign up</a></li>
+              <li><a class="dropdown-item" href="/login">Log in</a></li>
+            <% } else { %>
+              <li><a class="dropdown-item" href="/listings/new">Airbnb your home</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="/logout">Log out</a></li>
+            <% } %>
+          </ul>
+        </div>
       </div>
-      
-      <!-- Right side links -->
-      <div class="navbar-nav ms-auto">
-        <a class="nav-link" href="/listings/new">Airbnb your home</a>
-
-        <% if (!currUser) { %>
-          <a class="nav-link" href="/signup"><b>Sign up</b></a>
-          <a class="nav-link" href="/login"><b>Log in</b></a>
-        <% } %>
-
-        <% if (currUser) { %>
-          <a class="nav-link" href="/logout">Log out</a>
-        <% } %>
-      </div>
-      
-
     </div>
-  </div>
-</nav>
+
+    <form class="home-search" action="/listings" method="get" role="search">
+      <label class="search-field search-where">
+        <span>Where</span>
+        <input type="search" name="destination" placeholder="Search destinations" aria-label="Where do you want to go?">
+      </label>
+      <label class="search-field">
+        <span>When</span>
+        <input type="text" name="dates" placeholder="Add dates" aria-label="Add travel dates">
+      </label>
+      <label class="search-field">
+        <span>Who</span>
+        <input type="text" name="guests" placeholder="Add guests" aria-label="Add guests">
+      </label>
+      <button class="home-search-button" type="submit" aria-label="Search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </button>
+    </form>
+  </header>
+<% } else { %>
+  <nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/listings"><i class="fa-regular fa-compass"></i></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav"><a class="nav-link" href="/listings">Explore</a></div>
+        <div class="navbar-nav ms-auto">
+          <a class="nav-link" href="/listings/new">Airbnb your home</a>
+          <% if (!currUser) { %>
+            <a class="nav-link" href="/signup"><b>Sign up</b></a>
+            <a class="nav-link" href="/login"><b>Log in</b></a>
+          <% } else { %>
+            <a class="nav-link" href="/logout">Log out</a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </nav>
+<% } %>

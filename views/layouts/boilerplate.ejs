@@ -16,7 +16,7 @@
 </head>
 <body>
     <%- include("../includes/navbar.ejs") %>
-    <div class="container">
+    <div class="<%= typeof isHome !== 'undefined' && isHome ? 'home-page-container' : 'container' %>">
         <%- include("../includes/flash.ejs") %>
         <%- body %>
     </div>

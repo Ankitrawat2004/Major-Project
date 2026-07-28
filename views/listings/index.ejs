@@ -1,211 +1,103 @@
-<%  layout("/layouts/boilerplate")%>
+<% layout("/layouts/boilerplate") %>
 
-<body>
+<%
+  const homeSections = [
+    { title: "Popular homes near you", listings: allListings.slice(0, 6) },
+    { title: "Available this weekend", listings: allListings.slice(6, 12) },
+    { title: "Stay in iconic cities", listings: allListings.slice(12, 18) },
+    { title: "Guest favourites", listings: allListings.slice(18, 24) }
+  ].filter(section => section.listings.length);
+%>
 
-<style>
-  #filters {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-
-  .filter {
-    text-align: center;
-    margin-right: 2rem;
-    margin-top: 2rem;
-    opacity: 0.7;
-  }
-
-  .filter:hover {
-    opacity: 1;
-    cursor: pointer;
-  }
-
-  .filter p {
-    font-size: 0.8rem;
-    margin-top: 0.5rem;
-  }
-
-  .tax-toggle {
-    margin-left: auto;
-    margin-top: 0.75rem;
-  }
-  #tax-info{
-    display: none;
-  }
-
-  .tax-toggle{
-    border: 1px solid black;
-    border-radius : 1rem;
-    height: 3.25rem;
-    padding: 1rem;
-  }
-
-  /* Collapse button - hidden on larger screens */
-  .filter-toggle-btn {
-    display: none;
-    width: 100%;
-    margin-bottom: 1rem;
-  }
-
-  /* Media Query for Mobile/Tablet */
-  @media (max-width: 768px) {
-    .filter-toggle-btn {
-      display: block;
-    }
-
-    #filters {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease-out;
-    }
-
-    #filters.show {
-      max-height: 1000px;
-      transition: max-height 0.5s ease-in;
-    }
-
-    .filter {
-      margin-right: 1.5rem;
-      margin-top: 1rem;
-    }
-
-    .tax-toggle {
-      margin-left: 0;
-      width: 100%;
-    }
-  }
-
-  @media (max-width: 576px) {
-    .filter {
-      margin-right: 1rem;
-    }
-
-    .filter i {
-      font-size: 1.2rem;
-    }
-
-    .filter p {
-      font-size: 0.7rem;
-    }
-  }
-</style>
-
-<!-- Filter Toggle Button (Mobile Only) -->
-<button class="btn btn-outline-secondary filter-toggle-btn" type="button" onclick="toggleFilters()">
-  <i class="fa-solid fa-filter"></i> Show Filters
-</button>
-
-<!-- Filters Section -->
-<div id="filters">
-  <!-- Trending -->
-  <div class="filter">
-    <div><i class="fa-solid fa-fire"></i></div>
-    <p>Trending</p>
-  </div>
-
-  <!-- Rooms -->
-  <div class="filter">
-    <div><i class="fa-solid fa-bed"></i></div>
-    <p>Rooms</p>
-  </div>
-
-  <!-- Iconic Cities -->
-  <div class="filter">
-    <div><i class="fa-solid fa-mountain-city"></i></div>
-    <p>Iconic Cities</p>
-  </div>
-
-  <!-- Mountains -->
-  <div class="filter">
-    <div><i class="fa-solid fa-mountain"></i></div>
-    <p>Mountains</p>
-  </div>
-
-  <!-- Castles -->
-  <div class="filter">
-    <div><i class="fa-brands fa-fort-awesome"></i></div>
-    <p>Castles</p>
-  </div>
-
-  <!-- Amazing Pools -->
-  <div class="filter">
-    <div><i class="fa-solid fa-person-swimming"></i></div>
-    <p>Amazing Pools</p>
-  </div>
-
-  <!-- Camping -->
-  <div class="filter">
-    <div><i class="fa-solid fa-campground"></i></div>
-    <p>Camping</p>
-  </div>
-
-  <!-- Farms -->
-  <div class="filter">
-    <div><i class="fa-solid fa-cow"></i></div>
-    <p>Farms</p>
-  </div>
-
-  <!-- Arctic -->
-  <div class="filter">
-    <div><i class="fa-regular fa-snowflake"></i></div>
-    <p>Arctic</p>
-  </div>
-
-  <!-- Tax Toggle Switch -->
-  <div class="tax-toggle">
-    <div class="form-check-reverse form-switch">
-      <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault">
-      <label class="form-check-label" for="switchCheckDefault">Display total after taxes</label>
-    </div>
-  </div>
-</div>
-
-<!-- Listings Section -->
-<div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3">
-  <% for(let listing of allListings) { %>
-    <a href="/listings/<%= listing._id %>" class="listing-link">
-      <div class="card col listing-card">
-        <img src="<%= listing.image.url %>" class="card-img-top" alt="listing_image" style="height: 20rem"/>
-        <div class="card-img-overlay"></div>
-        <div class="card-body">
-          <p class="card-text"> 
-            <b><%= listing.title %></b><br/>
-          </p>
-          &#8377;<%= listing.price ? listing.price.toLocaleString("en-IN") : "N/A" %> / night
-          <i class="tax-info">  &nbsp; +18% GST </i>
+<main class="airbnb-home">
+  <% homeSections.forEach((section, sectionIndex) => { %>
+    <section class="home-section" aria-labelledby="section-title-<%= sectionIndex %>">
+      <div class="section-heading">
+        <h2 id="section-title-<%= sectionIndex %>">
+          <%= section.title %>
+          <span class="heading-arrow" aria-hidden="true">›</span>
+        </h2>
+        <div class="section-controls" aria-label="<%= section.title %> carousel controls">
+          <button type="button" class="scroll-button scroll-back" aria-label="Scroll back" disabled>
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <button type="button" class="scroll-button scroll-forward" aria-label="Scroll forward">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
         </div>
       </div>
-    </a>
-  <% } %>
+
+      <div class="listing-rail">
+        <% section.listings.forEach((listing, listingIndex) => { %>
+          <article class="home-listing-card">
+            <a href="/listings/<%= listing._id %>" class="home-listing-link" aria-label="View <%= listing.title %>">
+              <div class="listing-photo-wrap">
+                <img
+                  src="<%= listing.image.url %>"
+                  class="listing-photo"
+                  alt="<%= listing.title %>"
+                  loading="<%= sectionIndex === 0 && listingIndex < 4 ? 'eager' : 'lazy' %>"
+                />
+                <span class="guest-badge">Guest favourite</span>
+                <button type="button" class="heart-button" aria-label="Add <%= listing.title %> to favourites">
+                  <i class="fa-regular fa-heart"></i>
+                </button>
+              </div>
+              <div class="listing-copy">
+                <h3><%= listing.title %></h3>
+                <p class="listing-location"><%= listing.location %><% if (listing.country) { %>, <%= listing.country %><% } %></p>
+                <p class="listing-meta">
+                  <span>₹<%= listing.price ? listing.price.toLocaleString("en-IN") : "N/A" %> for 2 nights</span>
+                  <span aria-hidden="true"> · </span>
+                  <span><i class="fa-solid fa-star"></i> <%= (4.72 + ((sectionIndex + listingIndex) % 6) * 0.05).toFixed(2) %></span>
+                </p>
+              </div>
+            </a>
+          </article>
+        <% }) %>
+      </div>
+    </section>
+  <% }) %>
+</main>
+
+<div class="fee-toast" role="status">
+  <span class="fee-tag"><i class="fa-solid fa-tag"></i></span>
+  <span>Prices include all fees</span>
 </div>
 
 <script>
-  let taxSwitch = document.getElementById("switchCheckDefault");
-  taxSwitch.addEventListener("click", () => {
-  let taxInfo = document.getElementsByClassName("tax-info");
-  for(info of taxInfo){
-    if(info.style.display != "inline"){
-       info.style.display="inline";
-    }else{
-      info.style.display="none";
-    }
-  }
+  document.querySelectorAll(".home-section").forEach((section) => {
+    const rail = section.querySelector(".listing-rail");
+    const back = section.querySelector(".scroll-back");
+    const forward = section.querySelector(".scroll-forward");
+
+    const updateControls = () => {
+      back.disabled = rail.scrollLeft < 10;
+      forward.disabled = rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 10;
+    };
+
+    back.addEventListener("click", () => {
+      rail.scrollBy({ left: -rail.clientWidth * 0.8, behavior: "smooth" });
+    });
+
+    forward.addEventListener("click", () => {
+      rail.scrollBy({ left: rail.clientWidth * 0.8, behavior: "smooth" });
+    });
+
+    rail.addEventListener("scroll", updateControls, { passive: true });
+    window.addEventListener("resize", updateControls);
+    updateControls();
   });
 
-  // Toggle filters on mobile
-  function toggleFilters() {
-    const filters = document.getElementById("filters");
-    const btn = document.querySelector(".filter-toggle-btn");
-    
-    filters.classList.toggle("show");
-    
-    if (filters.classList.contains("show")) {
-      btn.innerHTML = '<i class="fa-solid fa-filter"></i> Hide Filters';
-    } else {
-      btn.innerHTML = '<i class="fa-solid fa-filter"></i> Show Filters';
-    }
-  }
+  document.querySelectorAll(".heart-button").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const icon = button.querySelector("i");
+      const selected = icon.classList.toggle("fa-solid");
+      icon.classList.toggle("fa-regular", !selected);
+      button.classList.toggle("is-saved", selected);
+      button.setAttribute("aria-label", selected ? "Remove from favourites" : "Add to favourites");
+    });
+  });
 </script>
-
-</body>
