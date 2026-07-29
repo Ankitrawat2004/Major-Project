@@ -4,6 +4,7 @@ if (process.env.NODE_ENV !== "production") {
 
 const mongoose = require("mongoose");
 const Listing = require("../models/listing");
+const User = require("../models/user");
 
 const homepageListings = [
   {
@@ -154,15 +155,29 @@ const homepageListings = [
 
 async function addHomepageListings() {
   await mongoose.connect(process.env.ATLASDB_URL);
+  const owner = await User.findOne({}).select("_id");
 
   let inserted = 0;
   for (const listing of homepageListings) {
+    const listingToInsert = owner
+      ? { ...listing, owner: owner._id }
+      : listing;
     const result = await Listing.updateOne(
       { title: listing.title },
-      { $setOnInsert: listing },
+      { $setOnInsert: listingToInsert },
       { upsert: true }
     );
     inserted += result.upsertedCount;
+  }
+
+  if (owner) {
+    await Listing.updateMany(
+      {
+        title: { $in: homepageListings.map((listing) => listing.title) },
+        $or: [{ owner: null }, { owner: { $exists: false } }]
+      },
+      { $set: { owner: owner._id } }
+    );
   }
 
   console.log(`Homepage listings ready: ${inserted} added, ${homepageListings.length - inserted} already existed.`);
