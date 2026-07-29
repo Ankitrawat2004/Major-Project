@@ -1,11 +1,38 @@
 <% layout("/layouts/boilerplate") %>
 
 <%
+  const byLocation = (places) => allListings.filter((listing) => {
+    const location = (listing.location || "").toLowerCase();
+    return places.some((place) => location.includes(place));
+  });
+
+  const noidaListings = byLocation(["noida"]);
+  const gurgaonListings = byLocation(["gurgaon", "gurugram"]);
+  const delhiNcrListings = byLocation(["delhi", "ghaziabad", "faridabad"]);
+  const usedIds = new Set([
+    ...noidaListings,
+    ...gurgaonListings,
+    ...delhiNcrListings
+  ].map((listing) => String(listing._id)));
+  const otherFavourites = allListings.filter((listing) => !usedIds.has(String(listing._id)));
+
   const homeSections = [
-    { title: "Popular homes near you", listings: allListings.slice(0, 6) },
-    { title: "Available this weekend", listings: allListings.slice(6, 12) },
-    { title: "Stay in iconic cities", listings: allListings.slice(12, 18) },
-    { title: "Guest favourites", listings: allListings.slice(18, 24) }
+    {
+      title: "Popular homes in Noida",
+      listings: noidaListings.length ? noidaListings : allListings.slice(0, 6)
+    },
+    {
+      title: "Available in Gurgaon District this weekend",
+      listings: gurgaonListings.length ? gurgaonListings : allListings.slice(6, 12)
+    },
+    {
+      title: "Stay in Delhi NCR",
+      listings: delhiNcrListings.length ? delhiNcrListings : allListings.slice(12, 18)
+    },
+    {
+      title: "Guest favourites in India",
+      listings: otherFavourites.slice(0, 8)
+    }
   ].filter(section => section.listings.length);
 %>
 
